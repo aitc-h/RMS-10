@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link, NavLink } from 'react-router-dom';
-import { useCart } from '../context/cart';
+import { useCart } from '../state/cartContext';
 
 const activeStyle = {
   color: 'purple',
@@ -22,6 +22,11 @@ export default function Header() {
           <li>
             <NavLink style={activeStyleFunc} to="/shoes">
               Shoes
+            </NavLink>
+          </li>
+          <li>
+            <NavLink style={activeStyleFunc} to="/backpacks">
+              Backpacks
             </NavLink>
           </li>
           <li>

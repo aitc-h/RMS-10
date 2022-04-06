@@ -1,6 +1,6 @@
 import React from 'react';
-import { useCart } from './context/cart';
-import useCheckout, { STATUS } from './hooks/useCheckout';
+import { useCart } from './state/cartContext';
+import useCheckout, { STATUS } from './state/useCheckout';
 
 const COUNTRIES = ['China', 'India', 'United Kingdom', 'USA'];
 

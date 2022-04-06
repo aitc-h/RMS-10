@@ -1,23 +1,24 @@
 import React, { useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
-import useFetch from './hooks/useFetch';
-import Spinner from './common/Spinner';
-
-import PageNotFound from './common/PageNotFound';
+import useFetch from './fetch/useFetch';
+import Spinner from './components/Spinner';
+import { toTitleCase } from './lib/string';
+import PageNotFound from './components/PageNotFound';
+import { useCategory } from './lib/fetch';
 
 export default function Products() {
   const [size, setSize] = useState('');
   const { category } = useParams();
-  const {
-    error,
-    loading,
-    data: products,
-  } = useFetch('products?category=' + category);
+  // const {
+  //   error,
+  //   loading,
+  //   data: products,
+  // } = useFetch('products?category=' + category);
 
-  if (error) throw error;
+  const { products, isLoading, isError } = useCategory(category);
 
-  if (loading) return <Spinner />;
-  if (products.length === 0) return <PageNotFound />;
+  if (isError) return <PageNotFound />;
+  if (isLoading) return <Spinner />;
 
   function renderProduct(p) {
     return (
@@ -38,22 +39,25 @@ export default function Products() {
     : products;
 
   return (
-    <>
-      <section id="filters">
-        <label htmlFor="size">Filter by Size:</label>{' '}
-        <select
-          id="size"
-          value={size}
-          onChange={(e) => setSize(e.target.value)}
-        >
-          <option value="">All sizes</option>
-          <option value="7">7</option>
-          <option value="8">8</option>
-          <option value="9">9</option>
-        </select>
-        {size && <h2>Found {filteredProducts.length} items</h2>}
-      </section>
+    <section id={category}>
+      <h1>{toTitleCase(category)}</h1>
+      {category === 'shoes' && (
+        <section id="filters">
+          <label htmlFor="size">Filter by Size:</label>{' '}
+          <select
+            id="size"
+            value={size}
+            onChange={(e) => setSize(e.target.value)}
+          >
+            <option value="">All sizes</option>
+            <option value="7">7</option>
+            <option value="8">8</option>
+            <option value="9">9</option>
+          </select>
+          {size && <h2>Found {filteredProducts.length} items</h2>}
+        </section>
+      )}
       <section id="products">{filteredProducts.map(renderProduct)}</section>
-    </>
+    </section>
   );
 }

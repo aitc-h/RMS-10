@@ -1,28 +1,35 @@
 import React, { useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import useFetch from './hooks/useFetch';
-import Spinner from './common/Spinner';
-import PageNotFound from './common/PageNotFound';
-import { useCart } from './context/cart';
+
+import Spinner from './components/Spinner';
+import PageNotFound from './components/PageNotFound';
+
+import { useCart } from './state/cartContext';
+
+import { toTitleCase } from './lib/string';
+import { useProduct } from './lib/fetch';
 
 export default function Detail() {
   const { id, category } = useParams();
   const { dispatch } = useCart();
-  const { error, loading, data: product } = useFetch(`products/${id}`);
   const [sku, setSku] = useState('');
   const navigate = useNavigate();
 
-  if (category !== 'shoes') return <PageNotFound />;
+  const { product, isLoading, isError } = useProduct(id);
 
-  if (loading) return <Spinner />;
-  if (!product) return <PageNotFound />;
-  if (error) throw error;
+  // if (error) throw error;
+  if (isLoading) return <Spinner />;
+  if (isError) return <PageNotFound />;
+
+  console.log(product);
+  const { name, description, price, skus, image } = product;
 
   return (
     <div id="detail">
-      <h1>{product.name}</h1>
-      <p>{product.description}</p>
-      <p id="price">${product.price}</p>
+      <h4>{toTitleCase(category)} &gt; </h4>
+      <h1>{name}</h1>
+      <p>{description}</p>
+      <p id="price">${price}</p>
       <select
         title="Size"
         id="size"
@@ -30,7 +37,7 @@ export default function Detail() {
         onChange={(e) => setSku(e.target.value)}
       >
         <option value="">Select size</option>
-        {product.skus.map(({ sku, size }) => (
+        {skus?.map(({ sku, size }) => (
           <option key={sku} value={sku}>
             {size}
           </option>
@@ -48,7 +55,7 @@ export default function Detail() {
           Add to cart
         </button>
       </p>
-      <img src={`/images/${product.image}`} alt={product.category} />
+      <img src={`/images/${image}`} alt={category} />
     </div>
   );
 }
