@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
-import useFetch from './fetch/useFetch';
+// import useFetch from './fetch/useFetch';
 import Spinner from './components/Spinner';
 import { toTitleCase } from './lib/string';
 import PageNotFound from './components/PageNotFound';
